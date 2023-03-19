@@ -10,9 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dateformat": "^5.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.3",
     "handlebars": "^4.7.7",
-    "nodemailer": "^6.9.0"
+    "mysql2": "^3.0.1",
+    "nanoid": "^4.0.0",
+    "nodemailer": "^6.9.0",
+    "pdfkit": "^0.13.0"
   }
 }

@@ -1,45 +1,57 @@
 import nodemailer from 'nodemailer'
-import Handlebars from 'handlebars';
-import { readFileSync } from 'fs'
-import { join, resolve } from 'path'
 
 export class Mail {
-    constructor() {
+    constructor(env) {
+        this.env = env
+
         this.transporter = nodemailer.createTransport({
-            host: "ssl0.ovh.net", // hostname
-            port: 465, // port for secure SMTP
+            host: this.env.get("SMTP_HOST"), // hostname
+            port: this.env.get("SMTP_PORT"), // port for secure SMTP
             auth: {
-              user: "jlm@multitraitements.fr",
-              pass: "Calix85350"
+              user: this.env.get("MAIL_JLM"),
+              pass: this.env.get("PASS_JLM")
             }
         })
     }
 
-
-    getMailTemplate(name, mail, phone, message) {
-        const filePath = join(resolve(), './src/templates/mail.html');
-        const source = readFileSync(filePath, 'utf-8').toString();
-        const template = Handlebars.compile(source);
-        const replacements = {
-          name: name,
-          mail: mail,
-          phone: phone,
-          message: message
-        };
-    
-        return template(replacements)
-    }
-
-
-    send(to, subject, html, callback) {
-        this.transporter.sendMail({
-            from: "jlm@multitraitements.fr",
+    sendWithAttachments(to, subject, html, pathTofileToSend, callback) {
+        const mailOption = {
+            from: this.env.get("MAIL_JLM"),
             to,
             subject,
-            html
-        }, (err, info) => {
+            html,
+            attachments: [
+                {
+                    path: pathTofileToSend
+                }
+            ]
+        }
+
+        this.transporter.sendMail(mailOption, (err, info) => {
             callback(err, info)
         });
+    }
+
+    async send(to, subject, html) {
+        const mailOption = {
+            from: this.env.get("MAIL_JLM"),
+            to,
+            subject,
+            html: html,
+        }
+
+        return new Promise((resolve, reject) => {
+            this.transporter.sendMail(mailOption, (err, info) => {
+                if (err) {
+                    console.log("error is " + error);
+                    resolve(false)
+                }
+                else {
+                    console.log(info.envelope)
+                    resolve(true)
+                }
+            });
+        })
     }
 
 }

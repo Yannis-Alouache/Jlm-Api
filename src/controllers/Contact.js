@@ -1,12 +1,13 @@
-
+import Handlebars from 'handlebars';
+import { copyFileSync, readFileSync } from 'fs'
+import { join, resolve } from 'path'
 
 export class Contact {
     constructor(mail) {
         this.mail = mail
     }
 
-    contact(req, res) {
-
+    async contact(req, res) {
         const {
             name,
             mail,
@@ -64,19 +65,35 @@ export class Contact {
             }) 
         }
 
-        
-        this.mail.send(
+
+        const html = this.getMailTemplate(name, mail, phone, message)
+
+        const resp = await this.mail.send(
             "bigyanni1@gmail.com",
-            "Nouveau message de ' + name + ' sur le Site Web",
-            this.mail.getMailTemplate(name, mail, phone, message),
-            (err, info) => {
-                if (err) {
-                    return res.status(200).send("error")
-                }
-                else {
-                    console.log(info.envelope)
-                    return res.status(200).send("success")
-                }
-            })
+            "Nouveau message de " + name + " sur le Site Web",
+            html
+        )
+
+
+        if (!resp) {
+            return res.status(200).send("error")
+        }
+        return res.status(200).send("success")
+        
+    }
+
+    getMailTemplate(name, mail, phone, message) {
+        const filePath = join(resolve(), './src/templates/contactMail.html');
+        const source = readFileSync(filePath, 'utf-8').toString();
+        const template = Handlebars.compile(source);
+        
+        const replacements = {
+          name: name,
+          mail: mail,
+          phone: phone,
+          message: message
+        };
+        
+        return template(replacements)
     }
 }

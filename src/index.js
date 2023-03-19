@@ -4,7 +4,7 @@ import { Router } from "./router/Router.js";
 try {
     const router = new Router()
     router.handle()
-    router.listen(3001)
+    router.listen()
 } catch (error) {
     throw error
 }
