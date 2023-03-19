@@ -1,6 +1,7 @@
 import express from 'express'
 import { Contact } from '../controllers/Contact.js';
 import { Invoice } from '../controllers/Invoice.js';
+import { Home } from '../controllers/Home.js';
 import { Db } from '../services/Db.js';
 import { Env } from '../services/Env.js';
 import { Mail } from '../services/Mail.js';
@@ -21,6 +22,7 @@ export class Router {
         this.mail       = new Mail(this.env)
         this.contact    = new Contact(this.mail)
         this.invoice    = new Invoice(this.mail, this.db)
+        this.home       = new Home();
     }
 
 
