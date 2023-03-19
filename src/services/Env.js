@@ -9,7 +9,7 @@ export class Env {
         const env = process.env[name]
 
         if (typeof env === 'undefined')
-            throw new Error(name + " n'existe pas dans .env")
+            console.log(name + " n'existe pas dans .env")
 
         return env
     }
