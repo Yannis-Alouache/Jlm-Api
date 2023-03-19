@@ -25,6 +25,7 @@ export class Router {
 
 
     handle() {
+        this.server.get('/', this.home.home.bind(this.home))
         this.server.post('/api/contact', this.contact.contact.bind(this.contact))
         this.server.post('/api/invoice/create', this.invoice.create.bind(this.invoice))
     }
